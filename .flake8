@@ -1,0 +1,20 @@
+[flake8]
+max-complexity = 26
+max-line-length = 120
+
+exclude=
+        .git,
+        __pycache__,
+        .tox,
+        .eggs,
+        *.egg,
+        venv,
+        pip-download-cache
+
+ignore=
+        W503,  # line break before binary operator. Instead we use W504 -line break after binary operator
+        C401,  # As set comprehension is not readable as set(i for i in something)
+        C408,  # As tuple call ("tuple()") is more readable as tuple literal "()".
+        I101,  # do not check ordering within "from import" statement.
+        D104,  # ignore __init__.py files. Missing docstring in public package error.
+        F401,  # delete later
