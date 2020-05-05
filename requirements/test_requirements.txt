@@ -4,6 +4,7 @@ flake8-print==3.1.4       # via -r requirements/test_requirements.in
 flake8==3.7.9             # via -r requirements/test_requirements.in, flake8-print
 mccabe==0.6.1             # via flake8
 pip-tools==5.1.1          # via -r requirements/test_requirements.in
+psycopg2-binary==2.8.5    # via -r requirements/test_requirements.in
 pycodestyle==2.5.0        # via flake8, flake8-print
 pyflakes==2.1.1           # via flake8
 six==1.14.0               # via flake8-print, pip-tools

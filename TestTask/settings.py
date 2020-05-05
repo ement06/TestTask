@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'posts',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +77,12 @@ WSGI_APPLICATION = 'TestTask.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Post',
+        'USER': os.getenv('POSTS_DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTS_DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('POSTS_DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('POSTS_DB_PORT', '5432')
     }
 }
 
