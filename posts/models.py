@@ -19,3 +19,10 @@ class Like(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['post_id', 'user_id']
+
+    @property
+    def count_like(self, post_id):
+        return self.objects.filter(post_id=post_id).count()
