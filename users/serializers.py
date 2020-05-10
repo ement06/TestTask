@@ -1,19 +1,13 @@
 from rest_framework import serializers
-# from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
 from users.models import User
 
 
-class UserLoginSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
-
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        models = User
-        fields = ["email", "password"]
-        extra_kwargs = {"password": {"write_only": True}}
-            
-            
-
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'last_login')
+        extra_kwargs = {"id": {"required": False}, "last_login": {"required": False}}
 
 class UserCreateSerializer(serializers.ModelSerializer):
 
@@ -21,13 +15,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = [
-            "first_name",
-            "last_name",
-            "email",
-            "password",
-        ]
+        fields = ["first_name", "last_name", "email", "password"]
         extra_kwargs = {"password": {"write_only": True}}
+
 
     def create(self, validated_data):
         first_name = validated_data["first_name"]

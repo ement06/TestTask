@@ -22,7 +22,3 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ['post_id', 'user_id']
-
-    @property
-    def count_like(self, post_id):
-        return self.objects.filter(post_id=post_id).count()

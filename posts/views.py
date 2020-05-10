@@ -1,89 +1,53 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import authentication, permissions
-from .models import Post, Like
-from .serializers import PostSerializer, LikeSerializer
 import jwt
-from users.models import User
+from datetime import datetime, timezone
+
+from rest_framework import generics
+from rest_framework import permissions
+
+from .models import Post, Like
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (
+    PostSerializer,
+    LikeSerializer,
+    AnalystSerializer,
+    )
 
 
-def check_auth(func):
-    def decode_jwt_token(self, request, **kwargs):
-        token = request.META.get('HTTP_AUTHORIZATION')
-        try:
-            decode_token = jwt.decode(token, 'secret')
-        except jwt.InvalidTokenError:
-            return Response('You are not authorized', status.HTTP_403_FORBIDDEN)
-        request.data['user_email'] = decode_token['email']
-        return func(self, request, **kwargs)
-    return decode_jwt_token
+class PostGenericView(generics.ListCreateAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
+
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
+
+class LikeGenericView(generics.ListCreateAPIView):
+    serializer_class = LikeSerializer
+    queryset = Like.objects
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
 
 
-class PostView(APIView):
-
-    def get(self, request, pk):
-        if pk:
-            post = Post.objects.get(id=pk)
-            res = PostSerializer(post)
-            return Response(res.data, status.HTTP_200_OK)
-
-        responce = Post.objects.all()
-        res = PostSerializer(responce, many=True)
-        return Response(res.data, status.HTTP_200_OK)
+class LikeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = LikeSerializer
+    queryset = Like.objects
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
 
-class PostOwnerView(APIView):
+class AnalystView(generics.ListAPIView):
+    serializer_class = AnalystSerializer
+    permission_classes = (permissions.IsAuthenticated, )
 
-    @check_auth
-    def post(self, request):
-        serializer = PostSerializer(data=request.data)
-        if not serializer.is_valid():
-            return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        
-        serializer.save()
-        return Response('Done', status.HTTP_201_CREATED)
-
-    @check_auth
-    def get(self, request):
-        data = PostSerializer.get_data(request.data)
-        response = PostSerializer(data, many=True)
-        return Response(response.data, status.HTTP_200_OK)
-
-
-class LikeView(APIView):
-
-    @check_auth
-    def post(self, request, pk):
-        post = LikeSerializer.get_post_by_id(pk)
-        if post:
-            user = LikeSerializer.get_data(request.data)
-            serializer = LikeSerializer()
-            serializer.create(post_id=post, user_id=user)
-            response = 'You are succesfuly liked post'
-        else:
-            response = 'Sorry, we dont have this post'
-        return Response(response, status.HTTP_200_OK)
+    def get_queryset(self):
+        date_from = datetime.strptime(self.request.query_params['date_from'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        date_to = datetime.strptime(self.request.query_params['date_to'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        queryset = Like.objects.filter(date__range=[date_from, date_to])
+        return queryset
     
-    @check_auth
-    def delete(self, request, pk):
-        post = LikeSerializer.get_post_by_id(pk)
-        if post:
-            user = LikeSerializer.get_data(request.data)
-            serializer = LikeSerializer()
-            serializer.delete(post_id=post, user_id=user)
-            response = 'You are succesfuly unliked post'
-        else:
-            response = 'Sorry, we dont have this post'
-        return Response(response, status.HTTP_200_OK)
-
-    @check_auth
-    def get(self, request, pk):
-        # post = LikeSerializer.get_post_by_id(pk)
-        post = True
-        if post:
-            # res = Like.objects.filter(post_id=pk).count()
-            # response = LikeSerializer({'count_like': res})
-            response = LikeSerializer(Like, context={'post_id': pk})
-            return Response(response.data, status.HTTP_200_OK)
-        return Response('=(', status.HTTP_400_BAD_REQUEST)

@@ -1,11 +1,10 @@
 from django.urls import path, include
 
-from .views import registration_view, login_view, logout_view
+from .views import UserListAPIView, UserCreateAPIView
+from rest_framework_jwt.views import ObtainJSONWebToken
 
 urlpatterns = [
-    # path('auth/', include('rest_auth.urls')),
-    path('login', login_view),
-    path('register', registration_view),
-    path('logout', logout_view)
-
+    path('', UserListAPIView.as_view()),
+    path('auth/login/', ObtainJSONWebToken.as_view()),
+    path('register/', UserCreateAPIView.as_view()),
 ]

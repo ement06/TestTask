@@ -1,9 +1,18 @@
 from django.urls import path
 
-from .views import PostView, PostOwnerView, LikeView
+from .views import (
+    PostGenericView,
+    PostDetailView,
+    LikeGenericView,
+    LikeDetailView,
+    AnalystView,
+    )
+
 
 urlpatterns = [
-    path('post/<int:pk>', PostView.as_view()),
-    path('post', PostOwnerView.as_view()),
-    path('like/<int:pk>', LikeView.as_view())
+    path('', PostGenericView.as_view()),
+    path('<int:pk>/', PostDetailView.as_view()),
+    path('like/', LikeGenericView.as_view()),
+    path('like/<int:pk>/', LikeDetailView.as_view()),
+    path('analyst/', AnalystView.as_view())
 ]

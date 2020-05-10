@@ -1,6 +1,6 @@
 .PHONY: help
 help:
-	@echo 'Makefile for MiniBank'
+	@echo 'Makefile for TestTask'
 	@echo ''
 	@echo '1. Building:'
 	@echo '  make setup_venv         (re)Build your environment and setup project'
