@@ -1,5 +1,6 @@
 django==2.1.1             # via -r requirements/requirements.in, djangorestframework
+djangorestframework-jwt==1.11.0  # via -r requirements/requirements.in
 djangorestframework==3.11.0  # via -r requirements/requirements.in
 psycopg2-binary==2.8.5    # via -r requirements/requirements.in
-psycopg2==2.7.7           # via -r requirements/requirements.in
+pyjwt==1.7.1              # via djangorestframework-jwt
 pytz==2020.1              # via django

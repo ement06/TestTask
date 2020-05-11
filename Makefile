@@ -13,6 +13,8 @@ help:
 	@echo ''
 	@echo '4. Run server'
 	@echo '  make runserver            Start local server'
+	@echo '5. Building Bot'
+	@echo '  make setup_bot_venv       Install bot requirements'
 
 .PHONY: runserver
 runserver:
@@ -28,6 +30,11 @@ setup_venv: clean-files
 	venv/bin/pip install -r requirements/test_requirements.txt
 	@printf ' -- Environment is ready.'
 
+.PHONY: setup_bot_venv
+setup_bot_venv: setup_venv
+	@echo ' -- Setting up environment'
+	venv/bin/pip install -r bot/requirements/requirements.txt
+	@printf ' -- Environment is ready.'
 
 clean-files:
 	@rm -rf venv/
