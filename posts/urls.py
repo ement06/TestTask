@@ -1,3 +1,5 @@
+"""Posts URL Configuration."""
+
 from django.urls import path
 
 from .views import (
@@ -6,7 +8,7 @@ from .views import (
     LikeGenericView,
     LikeDetailView,
     AnalystView,
-    )
+)
 
 
 urlpatterns = [
